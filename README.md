@@ -1,3 +1,3 @@
 # AIGomoku
-# chạy file game.py
+chạy file game.py
 
