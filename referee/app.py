@@ -1,6 +1,6 @@
 from flask_cors import CORS, cross_origin
 from flask import Flask, request, jsonify, make_response
-from flask_socketio import SocketIO
+# from flask_socketio import SocketIO
 import json
 import time
 from Board import BoardGame
@@ -18,7 +18,7 @@ team1_role = "x"
 team2_role = "o"
 room_id = "123"
 match_id = "321"
-size = 7
+size = 10
 #################
 
 time_list = [time.time()] * 2

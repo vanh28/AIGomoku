@@ -12,9 +12,13 @@ def create_pattern_dict():
     while (x < 2):
         y = -x
         # long_5
-        patternDict[(x, x, x, x, x)] = 1000000 * x
+        patternDict[(x, x, x, x, x)] = 10000000 * x
+
+        patternDict[(0, y, y, y, x)] = 200000 * x
+        patternDict[(x, y, y, y, 0)] = 200000 * x
+        patternDict[(x, y, y, y, y, x)] = 300000 * x
         # live_4
-        patternDict[(0, x, x, x, x, 0)] = 100000 * x
+        patternDict[(0, x, x, x, x, 0)] = 250000 * x
         patternDict[(0, x, x, x, 0, x, 0)] = 100000 * x
         patternDict[(0, x, 0, x, x, x, 0)] = 100000 * x
         patternDict[(0, x, x, 0, x, x, 0)] = 100000 * x
