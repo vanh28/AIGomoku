@@ -4,26 +4,33 @@ import utils as utils
 
 sys.setrecursionlimit(1500)
 
-N =5 # board size 15x15
+# N = 6 # board size 15x15
 
 class GomokuAI():
     def __init__(self, depth=3):
         self.depth = depth # default depth set to 3
-        self.boardMap = [[0 for j in range(N)] for i in range(N)]
+        self.size = 5
+        self.boardMap = [[0 for i in range(self.size)] for j in range(self.size)]
         self.currentI = -1
         self.currentJ = -1
         self.nextBound = {} # to store possible moves to be checked (i,j)
         self.boardValue = 0 
-
         self.turn = 0 
         self.lastPlayed = 0
-        self.emptyCells = N * N
+        self.emptyCells = self.size * self.size
         self.patternDict = utils.create_pattern_dict() # dictionary containing all patterns with corresponding score
         
-        self.zobristTable = utils.init_zobrist()
+        self.zobristTable = utils.init_zobrist(self.size)
         self.rollingHash = 0
         self.TTable = {}
 
+    def getSize(self):
+        return self.size
+    def setSize(self,size):
+        self.size = size
+        self.boardMap = [[0 for i in range(self.size)] for j in range(self.size)]
+        self.zobristTable = utils.init_zobrist(self.size)
+        self.emptyCells = self.size * self.size
     # Draw board in string format
     def drawBoard(self):
         '''
@@ -32,8 +39,8 @@ class GomokuAI():
         1 = AI (x)
         -1 = human (o)
         '''
-        for i in range(N):
-            for j in range(N):
+        for i in range(self.size):
+            for j in range(self.size):
                 if self.boardMap[i][j] == 1:
                     state = 'x'
                 if self.boardMap[i][j] == -1:
@@ -44,18 +51,18 @@ class GomokuAI():
             print()
         print() 
     
-    def setBoard(self):
+    def setBoardX(self):
         '''
         States:
         0 = empty (.)
         1 = AI (x)
         -1 = human (o)
         '''
-        for i in range(N):
-            for j in range(N):
-                if self.boardMap[i][j] == 'X':
+        for i in range(self.size):
+            for j in range(self.size):
+                if self.boardMap[i][j] == 'x':
                     self.boardMap[i][j] = 1
-                if self.boardMap[i][j] == 'O':
+                if self.boardMap[i][j] == 'o':
                     self.boardMap[i][j] = -1
                 if self.boardMap[i][j] == ' ':
                     self.boardMap[i][j] = 0
@@ -63,13 +70,28 @@ class GomokuAI():
         #     print()
         # print() 
 
+    def setBoardO(self):
+        '''
+        States:
+        0 = empty (.)
+        1 = AI (x)
+        -1 = human (o)
+        '''
+        for i in range(self.size):
+            for j in range(self.size):
+                if self.boardMap[i][j] == 'x':
+                    self.boardMap[i][j] = -1
+                if self.boardMap[i][j] == 'o':
+                    self.boardMap[i][j] = 1
+                if self.boardMap[i][j] == ' ':
+                    self.boardMap[i][j] = 0
     # Check whether a move is inside the board and whether it is empty
     def isValid(self, i, j, state=True):
         '''
         if state=True, check also whether the position is empty
         if state=False, only check whether the move is inside the board
         '''
-        if i<0 or i>=N or j<0 or j>=N:
+        if i<0 or i>=self.size or j<0 or j>=self.size:
             return False
         if state:
             if self.boardMap[i][j] != 0:
@@ -97,9 +119,9 @@ class GomokuAI():
         count = 0
         # look for 4 more steps on a certain direction
         for step in range(1, 5): 
-            if xdir != 0 and (j + xdir*step < 0 or j + xdir*step >= N): # ensure move inside the board
+            if xdir != 0 and (j + xdir*step < 0 or j + xdir*step >= self.size): # ensure move inside the board
                 break
-            if ydir != 0 and (i + ydir*step < 0 or i + ydir*step >= N):
+            if ydir != 0 and (i + ydir*step < 0 or i + ydir*step >= self.size):
                 break
             if self.boardMap[i + ydir*step][j + xdir*step] == state:
                 count += 1
@@ -125,8 +147,8 @@ class GomokuAI():
         1 = AI (x)
         -1 = human (o)
         '''
-        for i in range(5):
-            for j in range(5):
+        for i in range(self.size):
+            for j in range(self.size):
                 if (self.boardMap[i][j] == 1):
                     self.rollingHash ^= self.zobristTable[i][j][0]
                     self.emptyCells -= 1
@@ -181,7 +203,7 @@ class GomokuAI():
             elif dir[0] == 1:
                 steps_back = min(5, j_0, i_0)
             else:
-                steps_back = min(5, N-1-j_0, i_0)
+                steps_back = min(5, self.size-1-j_0, i_0)
             # Very first starting point after finding out number of steps to go back
             i_start = i_0 - steps_back * dir[1]
             j_start = j_0 - steps_back * dir[0]
@@ -344,8 +366,8 @@ class GomokuAI():
 
     # Set the first move of the AI in (7,7) the center of the board
     def firstMove(self):
-        self.currentI, self.currentJ = int(N/2),int(N/2)
-        self.setState(self.currentI, self.currentJ, 1)
+        self.currentI, self.currentJ = int(self.size/2),int(self.size/2)
+        self.setStateX(self.currentI, self.currentJ, 1)
 
     # Check whether the game has ended and returns the winner if there is
     # otherwise, if there are no empty cells left, it's tie

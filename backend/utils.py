@@ -1,10 +1,9 @@
 import random
 import uuid
-
+from AI import *
 ##### For managing the interface #####
-N = 5
-MARGIN = 23
 
+MARGIN = 23
 
 #### Pattern scores ####
 def create_pattern_dict():
@@ -65,9 +64,9 @@ def create_pattern_dict():
 
 
 ##### Zobrist Hashing #####
-def init_zobrist():
+def init_zobrist(size):
     zTable = [[[uuid.uuid4().int  for _ in range(2)] \
-                        for j in range(5)] for i in range(5)] #changed to 32 from 64
+                        for j in range(size)] for i in range(size)] #changed to 32 from 64
     return zTable
 
 def update_TTable(table, hash, score, depth):

@@ -19,6 +19,9 @@ def ai_move(ai):
         print('Error: i and j not valid. Given: ', ai.currentI, ai.currentJ)
         ai.updateBound(ai.currentI, ai.currentJ, ai.nextBound)
         bound_sorted = sorted(ai.nextBound.items(), key=lambda el: el[1], reverse=True)
+        # print(bound_sorted)
+        if bound_sorted == []:
+            return (-1, -1)
         pos = bound_sorted[0][0]
         move_i = pos[0]
         move_j = pos[1]
