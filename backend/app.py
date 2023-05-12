@@ -10,6 +10,7 @@ from flask_cors import CORS, cross_origin
 
 from AI import *
 import gomoku as gomoku
+import random
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -65,7 +66,7 @@ class GameClient:
                 print("Connection established")
                 self.init = True
                 self.room_id = data.get("room_id")
-
+        
             # Nhận thông tin trò chơi
             elif data.get("board") and data.get("status") == None:
                 # Nếu là lượt đi của đội của mình thì gửi nước đi
@@ -105,7 +106,7 @@ class GameClient:
                             ai.rollingHash ^= ai.zobristTable[move[0]][move[1]][0]
                             ai.emptyCells -= 1
                             # print("Move of X: ", move)
-                    elif (self.team_roles == 'o'):
+                    elif self.team_roles == 'o':
                         if ai.turn == 0:
                             self.size = int(data.get("size"))
                             self.board = copy.deepcopy(data.get("board"))
@@ -116,9 +117,14 @@ class GameClient:
                             for i in range(int(ai.getSize())):
                                 for j in range(int(ai.getSize())):
                                     ai.boardMap[i][j] = self.board[i][j]
-                            move = (int(int(ai.getSize())/2) + 1, int(int(ai.getSize())/2))
+                            move_options = [
+                                (int(int(ai.getSize()) / 2) - 1, int(int(ai.getSize()) / 2) - 1),
+                                (int(int(ai.getSize()) / 2) - 1, int(int(ai.getSize()) / 2) + 1),
+                                (int(int(ai.getSize()) / 2) + 1, int(int(ai.getSize()) / 2) - 1),
+                                (int(int(ai.getSize()) / 2) + 1, int(int(ai.getSize()) / 2) + 1)
+                            ]
+                            move = random.choice(move_options)
                             ai.turn += 1
-                            # print("First move of X: ", move)
                         else:
                             self.size = int(data.get("size"))     
                             self.board = copy.deepcopy(data.get("board"))
